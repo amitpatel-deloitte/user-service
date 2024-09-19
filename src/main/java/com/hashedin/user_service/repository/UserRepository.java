@@ -15,4 +15,6 @@ public interface UserRepository extends CrudRepository<User, Integer> {
 
     boolean existsByEmail(String email);
 
+    User findById(int id);
+
 }

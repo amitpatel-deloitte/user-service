@@ -1,27 +1,21 @@
 package com.hashedin.user_service.service;
 
+import com.hashedin.user_service.exception.handler.UserAlreadyExists;
+import com.hashedin.user_service.exception.handler.UserNotFoundException;
 import com.hashedin.user_service.model.LoginUser;
 import com.hashedin.user_service.model.RegisterUser;
 import com.hashedin.user_service.model.Role;
 import com.hashedin.user_service.model.User;
 import com.hashedin.user_service.repository.UserRepository;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.ws.rs.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -52,7 +46,7 @@ public class AuthenticationService {
     public User signup(RegisterUser input) {
 
         if(userRepository.existsByEmail(input.getEmail())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already found");
+            throw new UserAlreadyExists(" Email already found ");
         }
         Role role = roleService.findByName(input.getRole());
         Set<Role> roleSet = new HashSet<>();
@@ -88,7 +82,7 @@ public class AuthenticationService {
         );
 
         User user = userRepository.findByEmail(input.getEmail())
-                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow( () -> new UserNotFoundException( "User not found"));
 
         logger.info("User {} logged in.", input.getEmail());
 
