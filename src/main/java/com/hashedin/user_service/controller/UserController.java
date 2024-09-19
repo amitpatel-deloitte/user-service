@@ -41,8 +41,8 @@ public class UserController {
         return ResponseEntity.ok(" User with email " + email + " deleted successfully");
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<User> updateUserByEmail(@RequestParam String email, @RequestBody RegisterUser user) throws BadRequestException {
+    @PutMapping("/update/{email}")
+    public ResponseEntity<User> updateUserByEmail(@PathVariable("email") String email, @RequestBody RegisterUser user) throws BadRequestException {
         System.out.println(user.getName());
         if(!roles.contains(user.getRole())){
             throw new BadRequestException(" Role can only be in { ADMIN, CUSTOMER, RESTAURANT }");
