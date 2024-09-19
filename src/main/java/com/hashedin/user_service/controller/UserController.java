@@ -35,14 +35,6 @@ public class UserController {
         return ResponseEntity.ok(currentUser);
     }
 
-    @GetMapping("/all-users")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<User>> allUsers() {
-        List <User> users = userService.allUsers();
-
-        return ResponseEntity.ok(users);
-    }
-
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUserByEmail(@RequestParam String email){
         userService.deleteUserByEmail(email);
@@ -53,7 +45,7 @@ public class UserController {
     public ResponseEntity<User> updateUserByEmail(@RequestParam String email, @RequestBody RegisterUser user) throws BadRequestException {
         System.out.println(user.getName());
         if(!roles.contains(user.getRole())){
-            throw new BadRequestException(" Role can only be in { ADMIN, CUSTOMER, OWNER }");
+            throw new BadRequestException(" Role can only be in { ADMIN, CUSTOMER, RESTAURANT }");
         }
             User updatedUser = userService.updateUserByEmail(email, user);
             return ResponseEntity.ok(updatedUser);

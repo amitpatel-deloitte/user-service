@@ -7,17 +7,17 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.nio.file.AccessDeniedException;
 import java.security.SignatureException;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleSecurityException(Exception exception) {

@@ -92,21 +92,6 @@ public class AuthenticationService {
 
         logger.info("User {} logged in.", input.getEmail());
 
-        return new UserDetails() {
-            @Override
-            public Collection<? extends GrantedAuthority> getAuthorities() {
-                return getAuthority(user);
-            }
-
-            @Override
-            public String getPassword() {
-                return user.getPassword();
-            }
-
-            @Override
-            public String getUsername() {
-                return user.getEmail();
-            }
-        };
+        return user;
     }
 }
