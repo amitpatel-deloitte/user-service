@@ -5,31 +5,32 @@ import com.hashedin.user_service.model.Role;
 import com.hashedin.user_service.model.User;
 import com.hashedin.user_service.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
 
-    @Autowired
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private final RoleService roleService;
+
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
     }
 
     public List<User> allUsers() {
+        System.out.println();
         List<User> users = new ArrayList<>();
-
         userRepository.findAll().forEach(users::add);
         return users;
     }
@@ -44,11 +45,14 @@ public class UserService {
 
     public User updateUserByEmail(String email, RegisterUser user){
         User existingUser = userRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        Role role = roleService.findByName(user.getRole());
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(role);
 
         existingUser.setName(user.getName());
         existingUser.setEmail(user.getEmail());
         existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        existingUser.setRole(user.getRole());
+        existingUser.setRoles(roleSet);
         existingUser.setPhone_number(user.getContact_number());
         existingUser.setAddress(user.getAddress());
         existingUser.setUser_id(existingUser.getUser_id());
@@ -67,6 +71,5 @@ public class UserService {
         }else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
-
     }
 }

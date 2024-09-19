@@ -9,6 +9,7 @@ import com.hashedin.user_service.service.AuthenticationService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +26,7 @@ public class AuthenticationController {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
 
-    private final List<String> roles = Arrays.asList("ADMIN", "CUSTOMER", "OWNER");
+    private final List<String> roles = Arrays.asList("ADMIN", "CUSTOMER", "RESTAURANT");
 
     public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService) {
         this.jwtService = jwtService;
@@ -34,8 +35,9 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<User> register(@RequestBody RegisterUser registerUser) throws BadRequestException {
+
         if(!roles.contains(registerUser.getRole())){
-            throw new BadRequestException(" Role can only be in { ADMIN, CUSTOMER, OWNER }");
+            throw new BadRequestException(" Role can only be in { ADMIN, CUSTOMER, RESTAURANT }");
         }
         User registeredUser = authenticationService.signup(registerUser);
         return ResponseEntity.ok(registeredUser);
@@ -43,8 +45,9 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUser loginUser) {
-        User authenticatedUser = authenticationService.authenticate(loginUser);
+        UserDetails authenticatedUser = authenticationService.authenticate(loginUser);
 
+        System.out.println( "authorities " + authenticatedUser.getAuthorities());
         String jwtToken = jwtService.generateToken(authenticatedUser);
 
         LoginResponse loginResponse = LoginResponse.builder()
