@@ -37,6 +37,8 @@ public class UserService {
         return users;
     }
 
+    //model mapper
+    
     @Transactional
     public void deleteUserByEmail(String email) {
         User existingUser = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException( "User not found"));

@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -41,14 +40,14 @@ public class UserController {
 
     @DeleteMapping("/delete")
     @Operation(summary = " Delete Users", description = " To delete user by email ")
-    public ResponseEntity<String> deleteUserByEmail(@RequestParam String email)  throws BadRequestException {
+    public String deleteUserByEmail(@RequestParam String email)  throws BadRequestException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
         if(!currentUser.getEmail().equals(email)){
             throw new BadRequestException(" Can't delete other user account ");
         }
         userService.deleteUserByEmail(email);
-        return ResponseEntity.ok(" User with email " + email + " deleted successfully");
+        return " User with email " + email + " deleted successfully";
     }
 
     @PutMapping("/update")
